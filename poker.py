@@ -56,4 +56,4 @@ def one_pair():
             winner_set.add(i)
             
     return winner_set
-print(one_pair())
+
