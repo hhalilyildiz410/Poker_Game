@@ -75,7 +75,7 @@ def royalflush():
 def one_pair():
     result_card_dic()
     
-    values={}
+    only_numeric={}
     for player,cards in player_control_dic.items():
         list=[]
         for card in cards:
@@ -92,25 +92,52 @@ def one_pair():
                 list.append(11)
             else:
                 list.append(int(card[:-1]))
-        values[player]=sorted(list,reverse=True)
+        only_numeric[player]=sorted(list,reverse=True)
         ###############   HER OYUNCUNUN KARTLARI SAYISAL OLARAK YAZILDI#############
-    # return values
+    # return only_numeric
     
-# {'P1': [14, 13, 12, 11, 10, 9, 4],
-#  'P2': [14, 13, 13, 12, 12, 9, 4],
-#  'P3': [14, 13, 12, 12,  9, 5, 4],
-#  'P4': [14, 13, 12, 9,   4, 3, 3],
-#  'P5': [14, 13, 12, 9,   8, 6, 4],
-#  'P6': [14, 13, 12, 10,  9, 5, 4]}    
+# 'P1': [14, 13, 12, 11, 10, 9, 4],
+# 'P2': [14, 13, 13, 12, 12, 9, 4],
+# 'P3': [14, 13, 12, 12,  9, 5, 4],
+# 'P4': [14, 13, 12,  9,  4, 3, 3],
+# 'P5': [14, 13, 12,  9,  8, 6, 4],
+# 'P6': [14, 13, 12, 10,  9, 5, 4]}
     
-    for player,cards in values.items():
-        sayi=[]
+    for player,cards in only_numeric.items():
         for card in cards:
-            if cards.count(card)>1 and cards.count(card)<3:
-                winner_list.append(player)
-    for i in winner_list:
-        if winner_list.count(i)<3:
-            winner_set.add(i)
+            if len(set(cards))==6:
+                if cards.count(card)==2 and player not in one_pairs_dict:
+                    one_pairs_dict[player] = card
+                    
+    high_card={}
+    for key, value in one_pairs_dict.items():
+        
+        if value == max(one_pairs_dict.values()):
+            finally_winner.append(key)
             
-    return winner_set
+        if len(finally_winner)==1:
+            return finally_winner
+            
+        
+        else:
+            for player,cards in only_numeric.items():
+                toplam=0
+                count=0
+                for card in cards:
+                    if  cards.count(card)<2:
+                        toplam+=card
+                        count+=1
+                        if count==3:
+                            break
+                    high_card[player] = toplam
+                    
+            for key,value in high_card.items():
+                if value == max(high_card.values()):
+                    return key
+                
+                else :
+                    return f"{finally_winner} BERABERE"
+    
+print(one_pair())
+
 
