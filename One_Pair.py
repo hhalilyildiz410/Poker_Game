@@ -1,4 +1,9 @@
-p_cards={'P1': ['JH', '10H'], 'P2': ['QD', 'KD'], 'P3': ['QC', '5H'], 'P4': ['3D', '3S'], 'P5': ['6D', '8H'], 'P6': ['5D', '10S']}
+p_cards={'P1': ['JH', '10H'],
+         'P2': ['QD', 'KD'],
+         'P3': ['QC', '5H'],
+         'P4': ['3D', '3S'],
+         'P5': ['6D', '8H'],
+         'P6': ['AD', '10S']}
 c_cards=['4H', 'AH', 'KH', 'QH', '9H']
 
 
@@ -40,13 +45,7 @@ def one_pair():
         only_numeric[player]=sorted(list,reverse=True)
         ###############   HER OYUNCUNUN KARTLARI SAYISAL OLARAK YAZILDI#############
     # return only_numeric
-    
-# 'P1': [14, 13, 12, 11, 10, 9, 4],
-# 'P2': [14, 13, -, 12, -, 9, 4],
-# 'P3': [14, 13, -, 12,  9, 5, 4],
-# 'P4': [14, 13, 12,  9,  4, -, 3],
-# 'P5': [14, 13, 12,  9,  8, 6, 4],
-# 'P6': [14, 13, 12, 10,  9, 5, 4]}
+
     only_pair={}
     for player,cards in only_numeric.items():
         for card in cards:
@@ -56,18 +55,16 @@ def one_pair():
                     only_pair[player]=card
 #SADECE TEK CIFTE SAHIP OYUNCULAR BULUNDU  one_pairs_dict
 #SADECE SAHIP OLDUKLARI CIFT ile OLAN DICT  only_pair
-    
+    max_values=max(one_pairs_dict.values())
     for player,cards in one_pairs_dict.items():
-        if cards == max(one_pairs_dict.values()):
+        if cards[:6] == max_values[:6]:
             finally_winner[player]=cards
     
     if len(finally_winner) > 1:
-        return f"Kazananlar {finally_winner}"
+        return f"Kazananlar {[[i,p_cards[i]] for i in finally_winner.keys()]}"
     
     else:
-        return f"Kazanan {finally_winner}"   
+        return f"Kazanan {[[i,p_cards[i]] for i in finally_winner.keys()]}"   
 # BERABERLIK DURUMU VE ASIL KAZANAN BELIRLENDI 
 
 print(one_pair())
-
-
