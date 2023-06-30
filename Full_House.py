@@ -57,18 +57,19 @@ def Full_house():
         if len(triple) ==1 and len(double) !=0:
             pairs[player]=cards
 
+    final_winner={}
     for player,cards in pairs.items():
-        final_winner={}
+        
         if cards == max(pairs.values()):
             final_winner[player]=cards
 
-        if len(final_winner) > 1:
-            return f"Winners {final_winner}"
+    if len(final_winner) > 1:
+        return f"Winners {final_winner}"
 
-        else:
-            return f" Winner  {final_winner}"
+    else:
+        return f" Winner  {final_winner}"
 
 
-    return  final_winner
+    
 sonuc=Full_house()
 print(sonuc)
