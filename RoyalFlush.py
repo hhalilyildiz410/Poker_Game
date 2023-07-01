@@ -1,4 +1,9 @@
-p_cards={'P1': ['JH', '10H'], 'P2': ['QD', 'KD'], 'P3': ['QC', '5H'], 'P4': ['3D', '3S'], 'P5': ['6D', '8H'], 'P6': ['5D', '10S']}
+p_cards={'P1': ['JH', '10H'],
+         'P2': ['QD', 'KD'],
+         'P3': ['QC', '5H'],
+         'P4': ['3D', '3S'],
+         'P5': ['6D', '8H'],
+         'P6': ['5D', '10S']}
 c_cards=['4H', 'AH', 'KH', 'QH', '9H']
 winner_set=set()
 winner_list=[]
@@ -68,4 +73,5 @@ def royalflush():
             winner_list.append(i)
             winner_list.append('Royalflush')
             print('var S')
-    print(winner_list)
+    return winner_list
+print(royalflush())
