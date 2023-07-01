@@ -1,7 +1,5 @@
-
-
 p_cards = {
-    'P1': ['JH', '10H'],
+    'P1': ['2H', '3C'],
     'P2': ['QD', 'KD'],
     'P3': ['QC', '5H'],
     'P4': ['3D', '3S'],
@@ -9,24 +7,33 @@ p_cards = {
     'P6': ['5D', '10S']
 }
 
+c_cards = ['4C', 'AH', 'KH', 'QH', '9H']
 
-c_cards = ['4H', 'AH', 'KH', 'QH', '9H']
+def result_card_dic():
+    player_control_dic = {}
+    for player, cards in p_cards.items():
+        a = []
+        a.extend(cards)
+        a.extend(c_cards)
+        player_control_dic[player] = a
+    return player_control_dic
 
-def find_flush(cards):
-    flushes = []
-    suits = set(card[-1] for card in cards)
-    for suit in suits:
-        suit_cards = [card for card in cards if card[-1] == suit]
-        if len(suit_cards) >= 5:
-            flushes.extend(suit_cards, 5)
-    return flushes
+suits_dic={}
+player_control_dic=result_card_dic()
 
-winners = []
-for player, cards in p_cards.items():
-    flushes = find_flush(cards)
-    if flushes:
-        winners.append(player)
-        for flush in flushes:
-            print(f"Flush for {player}: {flush}")
-            
-print("Winners:", winners)
+for player,cards in player_control_dic.items():
+    new_list=[]
+    for card in cards:
+        new_list.append(card[-1])
+
+    for suit in new_list:
+        if new_list.count(suit)>4:
+            # print(player,'full house var')
+            rank_list=[]
+            for card in cards:
+                if card[-1]==suit:
+                    rank_list.append(card[:-1])
+            suits_dic[player]=rank_list
+
+
+print(suits_dic)
