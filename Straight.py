@@ -1,7 +1,7 @@
 p_cards={'P1': ['JH', '10H'], 'P2': ['QD', 'KD'], 'P3': ['QC', '5H'], 'P4': ['3D', '3S'], 'P5': ['6D', '8H'], 'P6': ['5D', '10S']}
 c_cards=['4H', 'AH', 'KH', 'QH', '9H']
 
-one_pairs_dict={}
+
 player_control_dic={}
 finally_winner=[]
 
@@ -56,7 +56,7 @@ def straight():
 
         only_numeric[player] = uniq_cards 
 # Cift kartlar teke indirildi
-
+    # return only_numeric
     for player, cards in only_numeric.items():
         for i in range(len(cards) - 4):  
             if cards[i]==cards[i+4]+4 :
@@ -70,11 +70,20 @@ def straight():
         if value == max(duzenli_ardisik_dict.values()):
             finally_winner[key]=value
             
-    if len(finally_winner) > 1:
-        return f"Kazananlar {finally_winner}"
+    for player,cards in finally_winner.items():
+        finally_winner[player]=player_control_dic[player]
+        
+    last_winner = {}    
+    for player, cards in finally_winner.items():
+        same_suit_count = 0
+        for suit in ['H', 'S', 'C', 'D']:
+            suit_cards = [card for card in cards if card.endswith(suit)]
+            if len(suit_cards) > 4:
+                same_suit_count += 1
+        if same_suit_count == 0:
+            last_winner[player] = cards
+            
+    return last_winner
     
-    else:
-        return f"Kazanan {finally_winner}"
-#   BERABERLIK VE TEK KAZANAN DURUMLARI BELIRLENDI 
                             
 print(straight())
