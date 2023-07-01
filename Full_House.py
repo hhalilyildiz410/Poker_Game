@@ -63,9 +63,7 @@ def Full_house():
     max_values =max(pairs.values())
     for player,cards in pairs.items():
         if cards[:2] == max_values[:2]:
-           
-    
-         final_winner[player]=cards        
+          final_winner[player]=cards        
             
     if len(final_winner) > 1:
       return f"Winners {final_winner}"
