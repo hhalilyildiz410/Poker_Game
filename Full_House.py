@@ -1,5 +1,5 @@
-p_cards={'P1': ['JH', 'JH'], 'P2': ['QD', 'AD'], 'P3': ['JC', '5H'], 'P4': ['3D', '3S'], 'P5': ['6D', '8H'], 'P6': ['5D', '10S']}
-c_cards=['JH', 'AH', 'AH', 'QH', 'QH']
+p_cards={'P1': ['AH', 'JH'], 'P2': ['3D', 'AD'], 'P3': ['JC', '5H'], 'P4': ['3D', '3S'], 'P5': ['6D', '8H'], 'P6': ['5D', '10S']}
+c_cards=['JH', 'AH', 'AH', 'KH', '3H']
 
 
 player_control_dic={}
@@ -18,58 +18,62 @@ def card_numeric():
         for card in cards:
             if card[0]=="A":
                 list.append(14)
-
+            
             elif card[0]=="K":
                 list.append(13)
-
+                
             elif card[0]=="Q":
                 list.append(12)
-
+                
             elif card[0] =="J":
                 list.append(11)
             else:
                 list.append(int(card[0]))
-
+        
         list.sort(reverse=True)
-        values[player]=sorted(list,reverse=True)
+        values[player]=sorted(list,reverse=True)     
     return values
-
+    
 #final_cards=result_card_dic()
 #print(final_cards)
 
 def Full_house():
     result_card_dic()
-    card_numeric()
-
-    pairs={}
-
+    card_numeric()   
+    pairs = {}
+    final_winner={}
     for player,cards in values.items():
-
         triple = []
         double=[]
-        for i in range(1,(len(cards)-1) ):
-            if cards[i]==cards[i-1] and cards[i]==cards[i+1]:
-                    triple.append(cards[i])
-                    i += 1
-            elif cards[i]==cards[i-1] :
-                double.append(cards[i])
-
+        for card in cards:
+            count=cards.count(card)
+            if count ==3:
+                if card not in triple:
+                    triple.append(card)
+            if count ==2:
+                if card not in double:
+                    double.append(card) 
+               
         if len(triple) ==1 and len(double) !=0:
-            pairs[player]=cards
-
-    final_winner={}
-    for player,cards in pairs.items():
-        
-        if cards == max(pairs.values()):
-            final_winner[player]=cards
-
-    if len(final_winner) > 1:
-        return f"Winners {final_winner}"
-
-    else:
-        return f" Winner  {final_winner}"
-
-
+            triple.append(double[0])
+            pairs[player]=triple    
+        elif len(triple)==2:
+            pairs[player]=triple
     
+    max_values =max(pairs.values())
+    for player,cards in pairs.items():
+        if cards[:2] == max_values[:2]:
+           
+    
+         final_winner[player]=cards        
+            
+    if len(final_winner) > 1:
+      return f"Winners {final_winner}"
+    
+    else: 
+      return f" Winner  {final_winner}"
+        
+        
+    return  final_winner
 sonuc=Full_house()
 print(sonuc)
