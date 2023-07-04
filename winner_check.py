@@ -128,8 +128,8 @@ royalflush()
 def straight_flush():
     global check
     player_wins = {}
-    for player, cards in p_cards.items():
-        all_cards = cards + c_cards
+    for player, cards in player_control_dic.items():
+        all_cards = cards + deck_5
         suits = set(card[-1] for card in all_cards)
         if len(suits) == 1:  # Tüm kartlar aynı renkte
             card_values = [card[:-1] for card in all_cards]
@@ -221,8 +221,10 @@ def Full_house():
             pairs[player]=triple    
         elif len(triple)==2:
             pairs[player]=triple
-    
-    max_values =max(pairs.values())
+    try:
+        max_values =max(pairs.values())
+    except:
+        pass
     for player,cards in pairs.items():
         if cards[:2] == max_values[:2]:
             final_winner[player]=cards        
@@ -439,4 +441,3 @@ def high_card():
         pass
     check = True
     return finally_winner
-
