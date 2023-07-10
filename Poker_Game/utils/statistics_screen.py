@@ -32,7 +32,7 @@ class StatisticsScreen(QtWidgets.QMainWindow):
                     new_data.append(i)
                     break
         # print(new_data)
-        self.ui.Summary_Table.setItem(0,0,QtWidgets.QTableWidgetItem(f":/icon/AC.png"))
+        self.ui.Summary_Table.setItem(0,0,QtWidgets.QTableWidgetItem(str(new_data[0][1])))
         self.ui.Summary_Table.setItem(0,1,QtWidgets.QTableWidgetItem(str(new_data[0][2])))
         self.ui.Summary_Table.setItem(0,2,QtWidgets.QTableWidgetItem(str(new_data[0][3])))
         self.ui.Summary_Table.setItem(0,3,QtWidgets.QTableWidgetItem(str(new_data[0][4])))    
@@ -60,4 +60,3 @@ class StatisticsScreen(QtWidgets.QMainWindow):
                 column+=1
             row_position=self.ui.Summary_Table.rowCount()
             self.ui.Summary_Table.insertRow(row_position)
-       
