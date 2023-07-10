@@ -22,24 +22,29 @@ class StatisticsScreen(QtWidgets.QMainWindow):
         self.baglanti=sqlite3.connect('statistik.db')
         self.cursor=self.baglanti.cursor()
         word=self.ui.cards_input.text()
+        wordt=word[3:]+" "+ word[:2]
+        print(wordt)
         self.cursor.execute('Select * From PokerStatistics')
         data=self.cursor.fetchall()
-        # print(data)
+        print(data)
         new_data=[]
         for i in data:
            for j in i:
-                if word in str(j):
+                if word in str(j) or wordt in str(j):
                     new_data.append(i)
                     break
-        # print(new_data)
-        self.ui.Summary_Table.setItem(0,0,QtWidgets.QTableWidgetItem(str(new_data[0][1])))
-        self.ui.Summary_Table.setItem(0,1,QtWidgets.QTableWidgetItem(str(new_data[0][2])))
-        self.ui.Summary_Table.setItem(0,2,QtWidgets.QTableWidgetItem(str(new_data[0][3])))
-        self.ui.Summary_Table.setItem(0,3,QtWidgets.QTableWidgetItem(str(new_data[0][4])))    
+        print(new_data)
+        for row ,form in enumerate(new_data):
+            for column,item in enumerate(form):
+                self.ui.Summary_Table.setItem(row,column,QtWidgets.QTableWidgetItem(str(item)))
+                column+=1
+            row_position=self.ui.Summary_Table.rowCount()
+            self.ui.Summary_Table.insertRow(row_position)
+        
     def best(self):
         self.baglanti=sqlite3.connect('statistik.db')
         self.cursor=self.baglanti.cursor()
-        self.cursor.execute('Select * From PokerStatistics order by winner_rate Desc Limit 5')
+        self.cursor.execute('Select * From PokerStatistics order by winner_rate Desc Limit 11')
         data=self.cursor.fetchall()
         # print(data)
         for row ,form in enumerate(data):
@@ -51,7 +56,7 @@ class StatisticsScreen(QtWidgets.QMainWindow):
     def worst(self):
         self.baglanti=sqlite3.connect('statistik.db')
         self.cursor=self.baglanti.cursor()
-        self.cursor.execute('Select * From PokerStatistics order by winner_rate Asc Limit 5')
+        self.cursor.execute('Select * From PokerStatistics order by winner_rate Asc Limit 11')
         data=self.cursor.fetchall()
         # print(data)
         for row ,form in enumerate(data):
