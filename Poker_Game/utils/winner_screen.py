@@ -1,7 +1,3 @@
-# from PyQt5.QtGui import *
-# from PyQt5.QtWidgets import *
-# from PyQt5.QtCore import *
-
 from PyQt5 import QtWidgets, QtGui
 from utils.ui.winner_screen_ui import Ui_MainWindow
 from winner_check import Game
@@ -9,6 +5,8 @@ import random
 
 
 class WinnerScreen(QtWidgets.QMainWindow):
+    
+    
     def __init__(self):
         super(WinnerScreen, self).__init__()
         self.screen = Ui_MainWindow()
@@ -26,7 +24,8 @@ class WinnerScreen(QtWidgets.QMainWindow):
         self.screen.two_btn.clicked.connect(self.two_pair)
         self.screen.one_btn.clicked.connect(self.one_pair)
         self.screen.higher_btn.clicked.connect(self.higher_card)
-
+        
+        
     def two_winner(self):
         self.count = 0
         while True:
@@ -34,6 +33,7 @@ class WinnerScreen(QtWidgets.QMainWindow):
             self.count += 1
             if len(self.game.winner_list) > 2:
                 self.show_winner()
+                
                 break
             self.game.restartGame()
         self.game.restartGame()
@@ -48,9 +48,16 @@ class WinnerScreen(QtWidgets.QMainWindow):
         while True:
             self.count += 1
             self.game.startGame()
+
+            
             if self.option in self.game.winner_list:
                 if len(self.game.winner_list) < 3:
                     self.show_winner()
+                    #  DATABASE ICIN GEREKLI LISTELER
+                    print(self.game.statistic_winner_hands)
+                    print("\n\n\n")
+                    print(self.game.statistic_all_hands)
+                    
                     break
             self.game.restartGame()
 
@@ -166,6 +173,13 @@ class WinnerScreen(QtWidgets.QMainWindow):
     def getWinnerList(self):
         res = ""
         for i in range(0, len(self.game.winner_list), 2):
-            res += str(int((i + 2) / 2)) + ". " + str(self.game.winner_list[i]) + " " + \
-                str(self.game.winner_list[i+1]) + "\n"
+            res +="Count: "+str(self.count) +"\n" +str(self.game.winner_list[i+1])
+            break
+        return res
+    
+    def getWinnerValues(self):
+        res = ""
+        for i in range(0, len(self.game.winner_list), 2):
+            res +=self.game.winner_list[i]
+            
         return res
