@@ -22,7 +22,8 @@ class StatisticsScreen(QtWidgets.QMainWindow):
         self.baglanti=sqlite3.connect('statistik.db')
         self.cursor=self.baglanti.cursor()
         word=self.ui.cards_input.text()
-        wordt=word[3:]+" "+ word[:2]
+        deel=word.split()
+        wordt=word[2]+" "+ word[0]
         print(wordt)
         self.cursor.execute('Select * From PokerStatistics')
         data=self.cursor.fetchall()
