@@ -33,7 +33,6 @@ class WinnerScreen(QtWidgets.QMainWindow):
 			self.count += 1
 			if len(self.game.winner_list) > 2:
 				self.show_winner()
-
 				break
 			self.game.restartGame()
 		self.game.restartGame()
@@ -43,23 +42,18 @@ class WinnerScreen(QtWidgets.QMainWindow):
 		self.hide()
 		self.statistics_screen = StatisticsScreen()
 		self.statistics_screen.show()
-		self.baglanti = sqlite3.connect('statistik.db')
-		cursor = self.baglanti.cursor()
-		cursor.execute('''CREATE TABLE IF NOT EXISTS PokerStatistics (hand TEXT, total_games INTEGER, wined_games INTEGER, winner_rate INTEGER)''')
+
+	def statistic_db(self):		
 		for hand in Game.statistic_all_hands:
-			for i in hand:
-				
-				hand_count = hand.count(i)
-				win_count = Game.statistic_winner_hands.count(i)
-				win_rate = win_count / hand_count
-				my_cards = ", ".join(i)
+			hand_count=0
+			win_count=0
+			hand_count += Game.statistic_all_hands.count(hand)
+			win_count += Game.statistic_winner_hands.count(hand)
+			win_rate = win_count / hand_count
+			my_cards = ",".join(hand)
+			if my_cards not in WinnerScreen.new_list:
 				WinnerScreen.new_list.append([my_cards, hand_count, win_count, win_rate])
-		for veri in WinnerScreen.new_list:
-			cursor.execute("INSERT INTO PokerStatistics VALUES (?, ?, ?, ?)", veri)
-		print("VERILER ISLENDI")
-		self.baglanti.commit()
-		self.baglanti.close()
-		WinnerScreen.new_list=[]
+
 	def winner_option(self):
 		while True:
 			self.count += 1
@@ -69,11 +63,21 @@ class WinnerScreen(QtWidgets.QMainWindow):
 			if self.option in self.game.winner_list:
 				if len(self.game.winner_list) < 3:
 					self.show_winner()
+					self.baglanti = sqlite3.connect('statistik.db')
+					cursor = self.baglanti.cursor()
+					cursor.execute('''DELETE FROM PokerStatistics''')
+					self.statistic_db()
+					for veri in WinnerScreen.new_list:
+						cursor.execute("INSERT INTO PokerStatistics VALUES (?, ?, ?, ?)", veri)
+					print("VERILER ISLENDI")
+					WinnerScreen.new_list=[]
 
-					# print(WinnerScreen.new_list)
+					self.baglanti.commit()
+					self.baglanti.close()
+					print(WinnerScreen.new_list)
 
-					# print(self.game.statistic_winner_hands)
-					# print("\n\n\n")
+					print(self.game.statistic_winner_hands)
+					print("\n\n\n")
 					# print(self.game.statistic_all_hands)
 
 					break
