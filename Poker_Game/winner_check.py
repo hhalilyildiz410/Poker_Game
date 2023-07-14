@@ -347,20 +347,19 @@ class Game:
 				if count == 1:
 					if card not in een:
 						een.append(card)
+
 			if len(double) >= 2:
 				pair.extend(double[:2])
 				pair.append(een[0])
 				pairs_dic[player] = pair
 		try:
 			for player, cards in pairs_dic.items():
-				max_value=max(pairs_dic.values())
-				if cards == max_value:
+				if cards == max(pairs_dic.values()):
 					self.winner_list.append(player)
 					self.winner_list.append('Two pair')
 					self.statistic_winner_hands.append(self.players[player])
 					self.check = True
-					break
-				break		
+						
 		except:
 			pass
 		
