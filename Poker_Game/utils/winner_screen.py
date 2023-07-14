@@ -1,11 +1,10 @@
 from PyQt5 import QtWidgets, QtGui
 from utils.ui.winner_screen_ui import Ui_MainWindow
 from winner_check import Game
-import random
 import sqlite3
 
 class WinnerScreen(QtWidgets.QMainWindow):
-	new_list = []
+	new_dict = {}
 
 	def __init__(self):
 		super(WinnerScreen, self).__init__()
@@ -24,8 +23,12 @@ class WinnerScreen(QtWidgets.QMainWindow):
 		self.screen.two_btn.clicked.connect(self.two_pair)
 		self.screen.one_btn.clicked.connect(self.one_pair)
 		self.screen.higher_btn.clicked.connect(self.higher_card)
+		self.baglanti = sqlite3.connect('statistic.db')
 
-
+	def closeEvent(self, event):
+			self.baglanti.close()
+			event.accept()
+			
 	def two_winner(self):
 		self.count = 0
 		while True:
@@ -44,46 +47,47 @@ class WinnerScreen(QtWidgets.QMainWindow):
 		self.statistics_screen.show()
 
 	def statistic_db(self):		
-		for hand in Game.statistic_all_hands:
-			hand_count=0
-			win_count=0
-			hand_count += Game.statistic_all_hands.count(hand)
-			win_count += Game.statistic_winner_hands.count(hand)
-			win_rate = win_count / hand_count
-			my_cards = ",".join(hand)
-			if my_cards not in WinnerScreen.new_list:
-				WinnerScreen.new_list.append([my_cards, hand_count, win_count, win_rate])
-
+		for hand in self.game.statistic_all_hands:
+			hand_count = self.game.statistic_all_hands.count(hand)
+			win_count = self.game.statistic_winner_hands.count(hand)
+			winner_rate=win_count/hand_count
+			my_cards = " ".join(sorted(hand))  
+			if my_cards not in WinnerScreen.new_dict:
+				WinnerScreen.new_dict[my_cards]=[
+												my_cards,
+												hand_count, 
+												win_count,
+												winner_rate
+											]
+    
 	def winner_option(self):
 		while True:
 			self.count += 1
 			self.game.startGame()
-
-
+		
 			if self.option in self.game.winner_list:
 				if len(self.game.winner_list) < 3:
 					self.show_winner()
-					self.baglanti = sqlite3.connect('statistik.db')
 					cursor = self.baglanti.cursor()
-					cursor.execute('''DELETE FROM PokerStatistics''')
 					self.statistic_db()
-					for veri in WinnerScreen.new_list:
-						cursor.execute("INSERT INTO PokerStatistics VALUES (?, ?, ?, ?)", veri)
-					print("VERILER ISLENDI")
-					WinnerScreen.new_list=[]
+					
+					for veri in WinnerScreen.new_dict.values():
+						cursor.execute('''
+							UPDATE PokerStatistics
+							SET hand_count = hand_count + ?,
+								win_count = win_count + ?,
+								winner_rate=?
+							WHERE hands = ?
+						''', (veri[1], veri[2],veri[3], veri[0]))
+
+					print("Data Processed")
 
 					self.baglanti.commit()
-					self.baglanti.close()
-					print(WinnerScreen.new_list)
-
-					print(self.game.statistic_winner_hands)
-					print("\n\n\n")
-					# print(self.game.statistic_all_hands)
-
 					break
 			self.game.restartGame()
 
 		self.game.restartGame()
+
 
 	def royal_flush(self):
 		self.count = 0
@@ -197,11 +201,4 @@ class WinnerScreen(QtWidgets.QMainWindow):
 		for i in range(0, len(self.game.winner_list), 2):
 			res +="Count: "+str(self.count) +"\n" +str(self.game.winner_list[i+1])
 			break
-		return res
-
-	def getWinnerValues(self):
-		res = ""
-		for i in range(0, len(self.game.winner_list), 2):
-			res +=self.game.winner_list[i]
-
 		return res
