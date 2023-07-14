@@ -1,10 +1,9 @@
 import random
 
-
 class Game:
-	statistic_winner_hands =[]
+	
 	statistic_all_hands =[]
-	symbol = ["C", "H", "S", "D"]
+	symbol = ["C", "D", "H", "S"]
 
 	def __init__(self,):
 		self.deck_create()
@@ -14,19 +13,18 @@ class Game:
 		self.player_control_dic = {}
 		self.player_hand()
 		self.result_card_dic()
+		self.statistic_winner_hands =[]
 
 	def restartGame(self):
+		
 		self.winner_list = []
 		self.deck_create()
 		self.set_board_cards()
 		self.player_hand()
 		self.result_card_dic()
 	
-	# Game.statistic_winner_hands=   Her oynanan elin kazanani
-	# Game.statistic_all_hands= 	6 oyuncunun kartlari
-
 	def startGame(self):
-		Game.statistic_all_hands.append(self.all_players_hand)
+		Game.statistic_all_hands.extend(self.all_players_hand)
 		self.check = False
 		self.royalflush()
 		if self.check == False:
@@ -61,16 +59,16 @@ class Game:
 				elif j == 14:
 					j = "A"
 				self.deck.append(str(j) + str(i))
+		return self.deck
 
 	def player_hand(self):
 		for i in range(1, 7):
-			random_2 = random.sample(self.deck, k=2)
+			random_2 = random.sample(self.deck,k=2)
 			self.deck.remove(random_2[0])
 			self.deck.remove(random_2[1])
 			self.players[f"P{i}"] = list(random_2)
 		self.all_players_hand=[x for x in self.players.values()]
 			
-
 	def set_board_cards(self):
 		self.board_cards = []
 		self.board_cards = random.sample(self.deck, 5)
@@ -158,48 +156,41 @@ class Game:
 				self.check = True
 	
 	def straight_flush(self):
-		player_wins = {}
+		winner={}
+		numeric_suits = {}
 		for player, cards in self.player_control_dic.items():
-			all_cards = cards
-			suits = set(card[-1] for card in all_cards)
-			if len(suits) == 1:  # Tüm kartlar aynı renkte
-				card_values = [card[:-1] for card in all_cards]
-				card_ranks = {
-					'A': 14,
-					'K': 13,
-					'Q': 12,
-					'J': 11,
-					'10': 10,
-					'9': 9,
-					'8': 8,
-					'7': 7,
-					'6': 6,
-					'5': 5,
-					'4': 4,
-					'3': 3,
-					'2': 2
-				}
-				sorted_values = sorted(
-					card_ranks[card_value] for card_value in card_values)
-				for i in range(len(sorted_values) - 4):
-					if sorted_values[i] == sorted_values[i + 1] - 1 == sorted_values[i + 2] - 2 == sorted_values[i + 3] - 3 == sorted_values[i + 4] - 4:
-						if player not in player_wins:
-							player_wins[player] = 0
-						player_wins[player] += 1
-						break
-			else:
-				player_wins[player] = 0
+			yeni=[]
+			same_suit_count = 0
+			for suit in ['H', 'S', 'C', 'D']:
+				suit_cards = [card[:-1] for card in cards if card.endswith(suit)]
+				if len(suit_cards) > 4:
+					same_suit_count += 1
+					for i in suit_cards:
+						if i[-1]== "J":
+							i= 11
+						elif i[-1]== "Q":
+							i= 12
+						elif i[-1]== "K":
+							i= 13
+						elif i[-1]== "A":
+							i= 14
+						yeni.append(int(i))
+					numeric_suits[player]=sorted(yeni,reverse=True)
+
+		for player,cards in numeric_suits.items():
+			if (cards[0]==cards[4]+4) :
+				winner[player]=cards
+
 		try:
-			max_rank = max(player_wins.values())
-			for player, rank in player_wins.items():
-				if rank == max_rank and rank != 0:
+			for player, value in winner.items():
+				if value == max(winner.values()):
 					self.winner_list.append(player)
-					self.winner_list.append("straight flush")
+					self.winner_list.append('straight flush')
 					self.statistic_winner_hands.append(self.players[player])
 					self.check = True
 		except:
 			pass
-
+		
 	def four_of_a_kind(self):
 		four_of_a_kind_players = {}
 
@@ -284,31 +275,25 @@ class Game:
 			pass
 
 	def straight(self):
-
 		duzenli_ardisik_dict = {}
 		only_new_numeric = {}
 		for player, cards in self.get_only_numerics().items():
-
 			uniq_cards = []
 			for i in range(len(cards)):
-
 				if cards[i] not in uniq_cards:
 					uniq_cards.append(cards[i])
-
 			only_new_numeric[player] = uniq_cards
-
 		for player, cards in only_new_numeric.items():
 			for i in range(len(cards) - 4):
 				if cards[i] == cards[i+4]+4:
 					duzenli_ardisik_dict[player] = cards[i:i+5]
 					break
-
 		winners = {}
+  
 		for player, cards in duzenli_ardisik_dict.items():
 			winners[player] = self.player_control_dic[player]
-
+   
 		last_winner = {}
-
 		for player, cards in winners.items():
 			same_suit_count = 0
 			for suit in ['H', 'S', 'C', 'D']:
@@ -319,7 +304,7 @@ class Game:
 				last_winner[player] = cards
 
 		try:
-			for key, value in last_winner.items():
+			for player, value in last_winner.items():
 				if value == max(last_winner.values()):
 					self.winner_list.append(player)
 					self.winner_list.append('Straight')
@@ -330,9 +315,7 @@ class Game:
 
 	def three_of_a_kind(self):
 		highest_rank = 0
-
 		only_numeric = self.get_only_numerics()
-
 		for player, cards in only_numeric.items():
 			value_counts = {}
 			for value in cards:
@@ -342,17 +325,16 @@ class Game:
 						rank = value
 						if rank > highest_rank:
 							highest_rank = rank
-							self.winner_list = [player, 'Three of a kind']
-							self.statistic_winner_hands.append(self.players[player])
+							self.winner_list = [player, 'Three of a kind']	
 							self.check = True
 						elif rank == highest_rank:
 							self.winner_list = [player, 'Three of a kind']
-							self.statistic_winner_hands.append(self.players[player])
 							self.check = True
+		if self.check==True:
+			self.statistic_winner_hands.append(self.players[player])
 
 	def two_pair(self):
 		pairs_dic = {}
-
 		for player, cards in self.get_only_numerics().items():
 			double = []
 			een = []
@@ -371,19 +353,19 @@ class Game:
 				pairs_dic[player] = pair
 		try:
 			for player, cards in pairs_dic.items():
-
-				if cards == max(pairs_dic.values()):
+				max_value=max(pairs_dic.values())
+				if cards == max_value:
 					self.winner_list.append(player)
 					self.winner_list.append('Two pair')
 					self.statistic_winner_hands.append(self.players[player])
 					self.check = True
-
+					break
+				break		
 		except:
 			pass
-
+		
 	def one_pair(self):
 		one_pairs_dict = {}
-
 		for player, cards in self.get_only_numerics().items():
 			for card in cards:
 				if len(set(cards)) == 6:
@@ -397,12 +379,10 @@ class Game:
 					self.winner_list.append('One pair')
 					self.statistic_winner_hands.append(self.players[player])
 					self.check = True
-
 		except:
 			pass
 
 	def high_card(self):
-
 		try:
 			max_values = max(self.get_only_numerics().values())
 			for player, cards in self.get_only_numerics().items():
@@ -411,6 +391,5 @@ class Game:
 					self.winner_list.append('Higher card')
 					self.statistic_winner_hands.append(self.players[player])
 					self.check = True
-
 		except:
 			pass
