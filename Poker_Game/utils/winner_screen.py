@@ -46,20 +46,15 @@ class WinnerScreen(QtWidgets.QMainWindow):
 		self.statistics_screen = StatisticsScreen()
 		self.statistics_screen.show()
 
-	def statistic_db(self):		
+	def statistic_db(self):	
 		for hand in self.game.statistic_all_hands:
 			hand_count = self.game.statistic_all_hands.count(hand)
 			win_count = self.game.statistic_winner_hands.count(hand)
-			winner_rate=win_count/hand_count
-			my_cards = " ".join(sorted(hand))  
-			if my_cards not in WinnerScreen.new_dict:
-				WinnerScreen.new_dict[my_cards]=[
-												my_cards,
-												hand_count, 
-												win_count,
-												winner_rate
-											]
-    
+			
+			my_cards = " ".join(sorted(hand))
+			if my_cards not in WinnerScreen.new_dict.keys():
+				WinnerScreen.new_dict[my_cards]=[my_cards,hand_count,win_count]
+
 	def winner_option(self):
 		while True:
 			self.count += 1
@@ -68,31 +63,32 @@ class WinnerScreen(QtWidgets.QMainWindow):
 			if self.option in self.game.winner_list:
 				if len(self.game.winner_list) < 3:
 					self.show_winner()
-					cursor = self.baglanti.cursor()
-					self.statistic_db()
-					
-					for veri in WinnerScreen.new_dict.values():
-						cursor.execute('''
-							UPDATE PokerStatistics
-							SET hand_count = hand_count + ?,
-								win_count = win_count + ?,
-								winner_rate=?
-							WHERE hands = ?
-						''', (veri[1], veri[2],veri[3], veri[0]))
-
-					print("Data Processed")
-
-					self.baglanti.commit()
+					# if self.option!= 'Royalflush':
+					self.statistic_write()
+					self.game.statistic_all_hands.clear()
+					self.game.statistic_winner_hands.clear()
+					WinnerScreen.new_dict.clear()
+					print("ISLENDI")
 					break
+					
 			self.game.restartGame()
-
 		self.game.restartGame()
 
+	def statistic_write(self):
+		self.statistic_db()
+		cursor = self.baglanti.cursor()
+		for veri in list(WinnerScreen.new_dict.values())[:10]:
+			cursor.execute('UPDATE PokerStatistics	SET hand_count = hand_count + ?, win_count = win_count + ? WHERE hands = ?', (veri[1], veri[2], veri[0]))
+		self.baglanti.commit()	
+		self.game.statistic_all_hands.clear()
+		self.game.statistic_winner_hands.clear()
+		WinnerScreen.new_dict.clear()
 
 	def royal_flush(self):
 		self.count = 0
 		self.option = 'Royalflush'
 		self.winner_option()
+			
 
 	def flush_straight(self):
 		self.count = 0
@@ -108,7 +104,7 @@ class WinnerScreen(QtWidgets.QMainWindow):
 		self.count = 0
 		self.option = 'Full house'
 		self.winner_option()
-
+		
 	def flush(self):
 		self.count = 0
 		self.option = 'Flush'
